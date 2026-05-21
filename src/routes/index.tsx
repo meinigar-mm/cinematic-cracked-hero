@@ -1,26 +1,39 @@
 import { createFileRoute } from "@tanstack/react-router";
+import Navbar from "@/components/Navbar";
+import HeroSection from "@/components/HeroSection";
 
 export const Route = createFileRoute("/")({
   component: Index,
+  head: () => ({
+    meta: [
+      { title: "Andharan — A Haunting Tale of Love and Darkness" },
+      {
+        name: "description",
+        content:
+          "Andharan: a cinematic dark thriller. One man returns to save the woman he never stopped loving.",
+      },
+    ],
+  }),
 });
 
-// IMPORTANT: Replace this placeholder. For sites with multiple pages (About, Services, Contact, etc.),
-// create separate route files (about.tsx, services.tsx, contact.tsx) — don't put all pages in this file.
-function PlaceholderIndex() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
-}
-
 function Index() {
-  return <PlaceholderIndex />;
+  return (
+    <main className="bg-background text-foreground min-h-screen">
+      <Navbar />
+      <HeroSection />
+      {/* Spacer so the scroll-driven crack effect has room to play */}
+      <section className="relative min-h-screen bg-background flex items-center justify-center px-6">
+        <div className="max-w-2xl text-center">
+          <h2 className="font-display text-3xl md:text-5xl text-foreground mb-6">
+            The story <span className="text-primary italic">continues</span>
+          </h2>
+          <p className="text-foreground/60 leading-relaxed">
+            A village. A curse. A love that refused to die. Step beyond the
+            broken glass and into a world where every shadow remembers your
+            name.
+          </p>
+        </div>
+      </section>
+    </main>
+  );
 }
