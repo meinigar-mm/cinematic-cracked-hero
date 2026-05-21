@@ -18,7 +18,7 @@ export default function GlassOverlay({ targetRef }: { targetRef: React.RefObject
       start: "top+=1 top",
       onEnter: () => {
         gsap.to(el, {
-          opacity: 1,
+          opacity: 0.35,
           scale: 1,
           duration: 0.25,
           ease: "power3.out",
@@ -43,7 +43,7 @@ export default function GlassOverlay({ targetRef }: { targetRef: React.RefObject
         backgroundImage: `url(${cracks})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
-        mixBlendMode: "screen",
+        opacity: 0,
       }}
     />
   );
