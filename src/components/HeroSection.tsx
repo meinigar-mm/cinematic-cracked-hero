@@ -1,54 +1,56 @@
 import { useRef } from "react";
 import { motion } from "framer-motion";
-import heroBg from "@/assets/hero-bg.jpg";
+import heroPoster from "@/assets/hero-poster.png";
 import GlassOverlay from "./GlassOverlay";
 
 export default function HeroSection() {
-  const heroRef = useRef(null);
+  const heroRef = useRef<HTMLElement>(null);
 
   return (
     <section
       ref={heroRef}
       className="relative min-h-screen w-full overflow-hidden bg-background"
     >
-      {/* Background */}
+      {/* Poster background */}
       <motion.div
-        initial={{ scale: 1.1, opacity: 0 }}
+        initial={{ scale: 1.08, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 2.2, ease: [0.22, 1, 0.36, 1] }}
         className="absolute inset-0 z-0"
         style={{
-          backgroundImage: `url(${heroBg})`,
+          backgroundImage: `url(${heroPoster})`,
           backgroundSize: "cover",
           backgroundPosition: "center right",
+          backgroundRepeat: "no-repeat",
         }}
       />
 
-      {/* Cinematic gradient overlays */}
-      <div className="absolute inset-0 z-10 bg-gradient-to-r from-background via-background/80 to-transparent" />
-      <div className="absolute inset-0 z-10 bg-gradient-to-t from-background/90 via-transparent to-background/40" />
+      {/* Cinematic gradient overlays for left-side text legibility */}
+      <div className="absolute inset-0 z-10 bg-gradient-to-r from-background via-background/70 to-transparent" />
+      <div className="absolute inset-0 z-10 bg-gradient-to-t from-background/80 via-transparent to-background/30" />
 
-      {/* Cracked glass — appears on scroll */}
+      {/* Cracked glass — scroll-driven */}
       <GlassOverlay targetRef={heroRef} />
 
       {/* Content */}
-      <div className="relative z-40 max-w-7xl mx-auto px-6 lg:px-10 pt-40 lg:pt-56 pb-24 min-h-screen flex flex-col justify-center">
+      <div className="relative z-40 max-w-7xl mx-auto px-6 lg:px-24 min-h-screen flex flex-col justify-center">
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, delay: 0.6, ease: "easeOut" }}
-          className="font-display text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] max-w-2xl text-foreground"
+          transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
+          className="font-bold text-white max-w-[569px] text-4xl md:text-5xl leading-[1.15] tracking-tight"
+          style={{ fontFamily: "'Inter', sans-serif" }}
         >
-          A Haunting Tale of Love
-          <br />
-          and <span className="text-primary italic">Darkness</span>
+          A Haunting Tale of Love and{" "}
+          <span className="text-primary">Darkness</span>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 1.1, ease: "easeOut" }}
-          className="mt-8 max-w-md text-base md:text-lg text-foreground/70 leading-relaxed"
+          transition={{ duration: 1, delay: 0.9, ease: "easeOut" }}
+          className="mt-5 max-w-[492px] text-base font-medium leading-[22px] text-[#B1B1B1]"
+          style={{ fontFamily: "'Inter', sans-serif" }}
         >
           In a world haunted by fear and unexplained deaths, one man returns to
           save the woman he never stopped loving.
@@ -57,14 +59,20 @@ export default function HeroSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 1.4, ease: "easeOut" }}
-          className="mt-10 flex flex-wrap gap-4"
+          transition={{ duration: 1, delay: 1.2, ease: "easeOut" }}
+          className="mt-6 flex items-center gap-[5px]"
         >
-          <button className="bg-primary text-primary-foreground px-8 py-3 rounded-sm text-sm tracking-[0.2em] font-semibold hover:brightness-110 hover:scale-[1.03] transition-all shadow-[0_0_40px_-10px_var(--primary)]">
-            EXPLORE
+          <button
+            className="w-[120px] h-[38px] rounded-[5px] bg-primary text-[#1D1D1D] text-xs font-medium capitalize hover:brightness-110 transition"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            Explore
           </button>
-          <button className="border border-primary text-primary px-8 py-3 rounded-sm text-sm tracking-[0.2em] font-semibold hover:bg-primary hover:text-primary-foreground transition-all">
-            WATCH TRAILER
+          <button
+            className="w-[120px] h-[38px] rounded-[5px] border border-primary text-primary text-xs font-medium capitalize hover:bg-primary hover:text-[#1D1D1D] transition"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            Watch Trailer
           </button>
         </motion.div>
 
@@ -73,7 +81,7 @@ export default function HeroSection() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 2, duration: 1 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 text-xs tracking-[0.4em] text-foreground/50"
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 text-[10px] tracking-[0.4em] text-white/50"
         >
           SCROLL
         </motion.div>
