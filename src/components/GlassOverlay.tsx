@@ -5,7 +5,7 @@ import cracks from "@/assets/cracks.png";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function GlassOverlay({ targetRef }) {
+export default function GlassOverlay({ targetRef }: { targetRef: React.RefObject<HTMLElement | null> }) {
   const overlayRef = useRef(null);
 
   useEffect(() => {
