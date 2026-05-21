@@ -43,7 +43,7 @@ export default function GlassOverlay({ targetRef }: { targetRef: React.RefObject
         backgroundImage: `url(${cracks})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
-        mixBlendMode: "screen",
+        opacity: 0,
       }}
     />
   );
