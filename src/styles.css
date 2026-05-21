@@ -97,7 +97,39 @@
   --sidebar-ring: oklch(0.704 0.04 256.788);
 }
 
-.dark {
+:root {
+  --background: oklch(0.08 0.01 40);
+  --foreground: oklch(0.96 0.02 80);
+  --card: oklch(0.12 0.015 40);
+  --card-foreground: oklch(0.96 0.02 80);
+  --popover: oklch(0.12 0.015 40);
+  --popover-foreground: oklch(0.96 0.02 80);
+  --primary: oklch(0.78 0.14 70);
+  --primary-foreground: oklch(0.12 0.02 40);
+  --secondary: oklch(0.18 0.02 40);
+  --secondary-foreground: oklch(0.96 0.02 80);
+  --muted: oklch(0.18 0.02 40);
+  --muted-foreground: oklch(0.68 0.04 70);
+  --accent: oklch(0.78 0.14 70);
+  --accent-foreground: oklch(0.12 0.02 40);
+  --border: oklch(0.25 0.03 60 / 40%);
+  --input: oklch(0.25 0.03 60 / 40%);
+  --ring: oklch(0.78 0.14 70);
+  --font-display: 'Cinzel', 'Playfair Display', serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-body);
+  }
+  .font-display {
+    font-family: var(--font-display);
+    letter-spacing: 0.02em;
+  }
+}
+
+.dark-unused {
   --background: oklch(0.129 0.042 264.695);
   --foreground: oklch(0.984 0.003 247.858);
   --card: oklch(0.208 0.042 265.755);
