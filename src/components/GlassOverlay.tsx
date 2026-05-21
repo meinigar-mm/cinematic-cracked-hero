@@ -6,29 +6,31 @@ import cracks from "@/assets/cracks.png";
 gsap.registerPlugin(ScrollTrigger);
 
 export default function GlassOverlay({ targetRef }: { targetRef: React.RefObject<HTMLElement | null> }) {
-  const overlayRef = useRef(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!overlayRef.current || !targetRef?.current) return;
     const el = overlayRef.current;
-    gsap.set(el, { opacity: 0, scale: 1.15, filter: "blur(8px)" });
+    gsap.set(el, { opacity: 0, scale: 1.05 });
 
-    const tween = gsap.to(el, {
-      opacity: 1,
-      scale: 1,
-      filter: "blur(0px)",
-      ease: "none",
-      scrollTrigger: {
-        trigger: targetRef.current,
-        start: "top top",
-        end: "bottom top",
-        scrub: 1.2,
+    const st = ScrollTrigger.create({
+      trigger: targetRef.current,
+      start: "top+=1 top",
+      onEnter: () => {
+        gsap.to(el, {
+          opacity: 1,
+          scale: 1,
+          duration: 0.25,
+          ease: "power3.out",
+        });
+      },
+      onLeaveBack: () => {
+        gsap.to(el, { opacity: 0, scale: 1.05, duration: 0.2 });
       },
     });
 
     return () => {
-      tween.scrollTrigger?.kill();
-      tween.kill();
+      st.kill();
     };
   }, [targetRef]);
 
