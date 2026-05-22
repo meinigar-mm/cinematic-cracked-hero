@@ -115,8 +115,8 @@
   --border: oklch(0.25 0.03 60 / 40%);
   --input: oklch(0.25 0.03 60 / 40%);
   --ring: oklch(0.78 0.14 70);
-  --font-display: 'Cinzel', 'Playfair Display', serif;
-  --font-body: 'Inter', system-ui, sans-serif;
+  --font-display: "Cinzel", "Playfair Display", serif;
+  --font-body: "Inter", system-ui, sans-serif;
 }
 
 @layer base {
@@ -165,6 +165,10 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
   * {
     border-color: var(--color-border);
   }
@@ -172,5 +176,19 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+  }
+}
+
+.hero-poster-bg {
+  background-image: var(--hero-poster-image);
+  background-position: center top;
+  background-size: 100% 100%;
+}
+
+@media (max-width: 767px) {
+  .hero-poster-bg {
+    background-image: var(--hero-mobile-image);
+    background-position: center center;
+    background-size: cover;
   }
 }

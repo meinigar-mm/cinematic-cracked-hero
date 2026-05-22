@@ -5,7 +5,11 @@ import cracks from "@/assets/cracks.png";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function GlassOverlay({ targetRef }: { targetRef: React.RefObject<HTMLElement | null> }) {
+export default function GlassOverlay({
+  targetRef,
+}: {
+  targetRef: React.RefObject<HTMLElement | null>;
+}) {
   const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -18,7 +22,7 @@ export default function GlassOverlay({ targetRef }: { targetRef: React.RefObject
       start: "top+=1 top",
       onEnter: () => {
         gsap.to(el, {
-          opacity: 0.35,
+          opacity: 0.95,
           scale: 1,
           duration: 0.25,
           ease: "power3.out",
@@ -43,6 +47,7 @@ export default function GlassOverlay({ targetRef }: { targetRef: React.RefObject
         backgroundImage: `url(${cracks})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
+        mixBlendMode: "screen",
         opacity: 0,
       }}
     />
