@@ -14,8 +14,6 @@ import creativeTwoImage from "@/assets/creative_2.png";
 import creativeThreeImage from "@/assets/creative_3.png";
 import creativeFourImage from "@/assets/creative_4.png";
 import etherealMysteryVideo from "@/assets/0_Ethereal_Mysterious_1920x1080.mp4";
-import heroBg from "@/assets/hero-bg.jpg";
-import heroPoster from "@/assets/hero-poster.png";
 import heroImage from "@/assets/hero_img.png";
 import heroineImage from "@/assets/heroine_img.png";
 
@@ -23,7 +21,7 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "Andharan — A Haunting Tale of Love and Darkness" },
+      { title: "Andharan - A Haunting Tale of Love and Darkness" },
       {
         name: "description",
         content:
@@ -84,19 +82,19 @@ const characters = [
     image: actorTwoImage,
     position: "center",
   },
- {
-  name: "Adhiran",
-  role: "As Aditya",
-  body: (
-    <>
-      Important Lead Character
-      <br />
-      Heroine First Lover
-    </>
-  ),
-  image: actorThreeImage,
-  position: "center",
-},
+  {
+    name: "Adhiran",
+    role: "As Aditya",
+    body: (
+      <>
+        Important Lead Character
+        <br />
+        Heroine First Lover
+      </>
+    ),
+    image: actorThreeImage,
+    position: "center",
+  },
   {
     name: "Anupama Kumar",
     role: "As Pyschiatrist",
@@ -296,7 +294,7 @@ function ProfileCard({
 }: {
   name: string;
   role: string;
-  body: string;
+  body: ReactNode;
   image: string;
   position: string;
   compact?: boolean;
@@ -304,12 +302,14 @@ function ProfileCard({
 }) {
   return (
     <article
-      className={`box-border flex shrink-0 flex-col items-center gap-5 rounded-[20px] border border-white bg-white/10 p-5 text-center ${compact ? "h-[478px] w-[290px]" : "h-[498px] w-[299px]"
-        }`}
+      className={`box-border flex shrink-0 flex-col items-center gap-5 rounded-[20px] border border-white bg-white/10 p-5 text-center ${
+        compact ? "h-[478px] w-[290px]" : "h-[498px] w-[299px]"
+      }`}
     >
       <div
-        className={`w-full overflow-hidden rounded-[10px] bg-[#CDCDCD] ${compact ? "h-[304px]" : "h-[304px]"
-          }`}
+        className={`w-full overflow-hidden rounded-[10px] bg-[#CDCDCD] ${
+          compact ? "h-[304px]" : "h-[304px]"
+        }`}
       >
         <div
           className="h-full w-full bg-cover bg-no-repeat"
@@ -326,8 +326,9 @@ function ProfileCard({
         </h3>
         <div className="flex w-full flex-col items-center gap-[5px]">
           <p
-            className={`flex items-center justify-center text-center text-base capitalize text-[#F6B76F] ${compact ? "min-h-[19px] font-medium" : "min-h-[30px] font-semibold"
-              }`}
+            className={`flex items-center justify-center text-center text-base capitalize text-[#F6B76F] ${
+              compact ? "min-h-[19px] font-medium" : "min-h-[30px] font-semibold"
+            }`}
           >
             {role}
           </p>
