@@ -13,9 +13,10 @@ import creativeOneImage from "@/assets/creative_1.png";
 import creativeTwoImage from "@/assets/creative_2.png";
 import creativeThreeImage from "@/assets/creative_3.png";
 import creativeFourImage from "@/assets/creative_4.png";
-import etherealMysteryVideo from "@/assets/0_Ethereal_Mysterious_1920x1080.mp4";
 import heroImage from "@/assets/hero_img.png";
 import heroineImage from "@/assets/heroine_img.png";
+
+const etherealMysteryVideo = "/assets/0_Ethereal_Mysterious_1920x1080.mp4";
 
 export const Route = createFileRoute("/")({
   component: Index,
