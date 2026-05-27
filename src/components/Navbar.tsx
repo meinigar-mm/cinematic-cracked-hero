@@ -7,7 +7,7 @@ const links = [
   { label: "Home", href: "#home" },
   { label: "Mystery", href: "#story-overview" },
   { label: "Persona", href: "#main-characters" },
-  { label: "The Soundscape", href: "#why-it-works" },
+  { label: "The Soundscape", href: "#soundscape" },
   { label: "Architects", href: "#creative-team" },
 ];
 

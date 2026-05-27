@@ -67,7 +67,7 @@ export default function HeroSection() {
           className="mt-6 flex items-center justify-center gap-[5px] lg:justify-start"
         >
           <a
-            href="#why-it-works"
+            href="#soundscape"
             className="flex w-[120px] h-[38px] items-center justify-center rounded-[5px] bg-primary text-[#1D1D1D] text-xs font-medium capitalize hover:brightness-110 transition"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
