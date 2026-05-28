@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
-import { Instagram, Linkedin, Github, Mail, Twitter } from "lucide-react";
+import { Instagram, Linkedin, Github, Mail, Twitter, Youtube, Facebook } from "lucide-react";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
@@ -372,9 +372,63 @@ function LandingContent() {
             Andharan promises a haunting cinematic experience blending suspense, romance, emotional
             storytelling, and unforgettable music.
           </p>
-          <button className="mt-[72px] h-[75px] w-full max-w-[398px] rounded-[10px] bg-[#F6B76F] text-xl font-medium capitalize leading-[55px] text-[#1D1D1D] shadow-[0_4px_4px_rgba(0,0,0,0.25)] md:text-2xl">
+
+          {/* Social Media Icons */}
+          <div className="mt-8 flex items-center justify-center gap-8">
+            <a
+              href="https://www.instagram.com/andharanmovie?igsh=MXJ3bWNyejBma2Ztcw=="
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center rounded-full bg-white/10 p-4 text-[#F6B76F] transition-all hover:bg-[#F6B76F] hover:text-[#1D1D1D]"
+              aria-label="Instagram"
+            >
+              <Instagram size={28} />
+            </a>
+            <a
+              href="https://x.com/andharanmovie"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center rounded-full bg-white/10 p-4 text-[#F6B76F] transition-all hover:bg-[#F6B76F] hover:text-[#1D1D1D]"
+              aria-label="X"
+            >
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.6l-5.17-6.76-5.91 6.76h-3.308l7.73-8.835L2.42 2.25h6.76l4.694 6.207 5.37-6.207zM17.002 18.335h1.834L6.822 4.156H4.881l12.121 14.179z" />
+              </svg>
+            </a>
+            <a
+              href="https://youtube.com/@andharanthehunter?si=LlInbond-EdKUcUY"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center rounded-full bg-white/10 p-4 text-[#F6B76F] transition-all hover:bg-[#F6B76F] hover:text-[#1D1D1D]"
+              aria-label="YouTube"
+            >
+              <Youtube size={28} />
+            </a>
+            <a
+              href="https://www.facebook.com/andharanmovie?__cft__[0]=AZb80cy5pPk0xyPYzhyra86V8HCWfUlZ2-YnRuSruK7oQfLFbCHa24WeaR8iRAH9-TFfVAX0hwQ5gh6hlDHmFTPIBkw5nibtH7eaN0PPly99bp1DCnci6xn1A4pHJPMN88xbeA0Yq0Wz4OS88QcQWsbhhGsDWe5rvdCFAz5VZQB9wGSitni0fBVrtOkj4VGH_O_SVUPr5GiapTru1JUPPJMn&__tn__=-UC%2CP-R"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center rounded-full bg-white/10 p-4 text-[#F6B76F] transition-all hover:bg-[#F6B76F] hover:text-[#1D1D1D]"
+              aria-label="Facebook"
+            >
+              <Facebook size={28} />
+            </a>
+          </div>
+
+          <a
+            href="https://www.instagram.com/andharanmovie?igsh=MXJ3bWNyejBma2Ztcw=="
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-[72px] inline-flex h-[75px] w-full max-w-[398px] items-center justify-center rounded-[10px] bg-[#F6B76F] text-xl font-medium capitalize text-[#1D1D1D] shadow-[0_4px_4px_rgba(0,0,0,0.25)] transition-all hover:bg-[#E8A855] md:text-2xl"
+          >
             Follow Movies Updates
-          </button>
+          </a>
         </div>
       </section>
     </>
