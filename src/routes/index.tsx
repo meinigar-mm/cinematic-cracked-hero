@@ -163,7 +163,7 @@ const team = [
   {
     title: "Cinematographer",
     name: "Kishore Kumar R",
-    body: "Visual storyteller experienced in feature films, web series, and cinematic shorts.",
+    body: "Cinema is the art of writing with light, and for Andharan, those lines were masterfully drawn by cinematographer Kishore Rama. Tasked with defining the film's visual language, Kishore utilized innovative camera techniques and a meticulously curated aesthetic to elevate the tension of the script. The work he has done on this film is a powerful evolution of his previous camera work, which spans a diverse portfolio of artistic shorts, visually commanding narratives, and independent pieces celebrated for their mood and texture. His framing doesn't just capture the actors; it captures the unspoken subtext of every scene.",
     image: creativeThreeImage,
     position: "center",
     social: {
@@ -354,7 +354,7 @@ function LandingContent() {
         <div className="mx-auto max-w-[1080px]">
           <div className="mb-12 text-center">
             <h2 className="text-3xl font-black uppercase leading-tight text-white md:text-4xl">
-              Theatrical <span className="text-[#F6B76F]">Credits</span>
+              Credits <span className="text-[#F6B76F]">Roll</span>
             </h2>
           </div>
 
