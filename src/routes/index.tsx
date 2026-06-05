@@ -1,6 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
-import { Instagram, Linkedin, Github, Mail, Twitter, Youtube, Facebook } from "lucide-react";
+import {
+  Instagram,
+  Linkedin,
+  Github,
+  Mail,
+  Twitter,
+  Youtube,
+  Facebook,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
@@ -17,6 +25,7 @@ import creativeThreeImage from "@/assets/creative_3.png";
 import creativeFourImage from "@/assets/creative_4.png";
 import heroImage from "@/assets/hero_img.png";
 import heroineImage from "@/assets/heroine_img.png";
+import moviePoster from "@/assets/movie_poster.png";
 
 const etherealMysteryVideo = "/assets/0_Ethereal_Mysterious_1920x1080.mp4";
 
@@ -182,24 +191,60 @@ const team = [
   },
 ];
 
+type MusicPlatformLink = {
+  name: string;
+  href: string;
+};
+
+const chellaPullaLinks: MusicPlatformLink[] = [
+  {
+    name: "Apple Music",
+    href: "https://music.apple.com/us/album/chella-pulla/6775104427?i=6775104431",
+  },
+  {
+    name: "YouTube Music",
+    href: "https://music.youtube.com/watch?v=Xi2jSwpkEio&si=1h0EVykP92ftk_LA",
+  },
+  {
+    name: "Gaana",
+    href: "https://gaana.com/song/chella-pulla-4073-7589",
+  },
+  {
+    name: "Amazon Music",
+    href: "https://music.amazon.in/tracks/B0H3GTGNSV?marketplaceId=A21TJRUUN4KGV&musicTerritory=IN&ref=dm_sh_cye9gmYD7RnpdBIJ4O8VFyeDw",
+  },
+  {
+    name: "JioSaavn",
+    href: "https://www.jiosaavn.com/song/chella-pulla/GwABeDd-Amk",
+  },
+  {
+    name: "iTunes",
+    href: "http://itunes.apple.com/album/id6775104427?ls=1&app=itunes",
+  },
+];
+
 const soundscapeTracks = [
   {
-    title: "TRACK 01: ADADA THIRUDA",
+    title: "TRACK 01: CHELLA PULLA",
     subtitle: "The Heartbeat of First Love",
     vibe: "A dream-like, incredibly soothing love melody that opens a window into the heroine's deepest romantic vulnerabilities. The piece captures an innocent, subtle charm through tender vocal landscapes.",
     credits: "Vocals by Chinmayi | Lyrics by Mohan Rajan",
+    image: moviePoster,
+    links: chellaPullaLinks,
   },
   {
     title: "TRACK 02: NILAVIN OLI NEEYADI",
     subtitle: "The Protector's Confession",
     vibe: "A deeply expressive, soul-stirring montage track presented entirely from the hero's perspective. It weaves a delicate narrative of quiet admiration and protective, enduring love.",
     credits: "Vocals by Vijay Narain | Lyrics by Karthik Netha",
+    image: moviePoster,
   },
   {
-    title: "TRACK 03: CHELLA PULLA",
+    title: "TRACK 03: ADADA THIRUDA",
     subtitle: "The Echo of Youth",
     vibe: "A vibrant, highly nostalgic, and energetic track capturing the hero's early teenage years. It serves as a playful, charming ode to the innocent obsession of unrequited, youthful love.",
     credits: "Vocals by Aravind Srinivas | Lyrics by Hariharan",
+    image: moviePoster,
   },
 ];
 
@@ -233,7 +278,7 @@ function LandingContent() {
               </>
             }
           />
-          <p className="mx-auto mt-8 max-w-[752px] text-center text-sm font-normal capitalize leading-[26px] text-[#CACACA]">
+          <p className="mx-auto mt-8 max-w-[752px] text-center text-[14px] font-normal capitalize leading-[26px] text-[#CACACA]">
             Karthika, a young woman haunted by a deadly pattern, every man she becomes engaged to
             dies under mysterious, untraceable circumstance, lives in the shadow of fear and
             isolation. When Chezhiyan, a devoted police officer and her former love, returns to
@@ -253,7 +298,7 @@ function LandingContent() {
         <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(246,183,111,0.16),transparent_32%,rgba(86,46,0,0.36)_100%)]" />
         <div className="relative z-10 mx-auto max-w-[1080px]">
           <div className="mx-auto max-w-[860px] text-center">
-            <p className="text-base font-black uppercase leading-[30px] text-white">
+            <p className="text-[14px] font-black uppercase leading-[30px] text-white">
               The Soundscape
             </p>
             <h2 className="mt-2 text-3xl font-black uppercase leading-tight text-white md:text-4xl">
@@ -261,10 +306,10 @@ function LandingContent() {
             </h2>
           </div>
           <div className="mt-10 border-y border-[#F6B76F]/30 py-8 text-[15px] leading-7 text-[#D7D7D7] md:text-base">
-            <p className="text-lg font-semibold text-white">
+            <p className="text-[14px] font-semibold text-white">
               <span className="text-[#F6B76F]">Sonic Overview:</span> The Maestro Hari S R
             </p>
-            <p className="mt-4">
+            <p className="mt-4 text-[14px]">
               The complex emotional and terrifying atmosphere of Andharan is orchestrated by modern
               cinema's dynamic music director and programmer, Hari S R. Known for his atmospheric
               composition styles in films like Kaalangalil Aval Vasantham and Akkaran, as well as
@@ -274,37 +319,56 @@ function LandingContent() {
               massive modern soundtracks, including Guntur Kaaram, OG, Game Changer, RajaSaab, and
               Akhanda 2.
             </p>
-            <div className="mt-7 flex flex-wrap justify-center gap-3 text-xs font-semibold uppercase tracking-[0.16em] text-[#F6B76F]">
-              <span className="border border-[#F6B76F]/40 px-4 py-2">Spotify</span>
-              <span className="border border-[#F6B76F]/40 px-4 py-2">Apple Music</span>
-              <span className="border border-[#F6B76F]/40 px-4 py-2">Amazon Music</span>
-              <span className="border border-[#F6B76F]/40 px-4 py-2">YouTube Audio</span>
-            </div>
           </div>
           <div className="mt-10 grid gap-5 text-[15px] leading-7 md:text-base">
             {soundscapeTracks.map((track) => (
               <article
                 key={track.title}
-                className="border border-white/15 bg-white/[0.06] p-5 shadow-[0_24px_70px_rgba(0,0,0,0.35)] backdrop-blur-sm md:p-6"
+                className="flex gap-4 border border-white/15 bg-white/[0.06] p-5 shadow-[0_24px_70px_rgba(0,0,0,0.35)] backdrop-blur-sm md:gap-6 md:p-6"
               >
-                <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                  <div>
-                    <p className="text-sm font-black uppercase tracking-[0.14em] text-[#F6B76F]">
-                      {track.title}
-                    </p>
-                    <h3 className="mt-1 text-xl font-bold text-white">{track.subtitle}</h3>
-                  </div>
-                  <span className="w-fit border border-[#F6B76F]/40 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#F6B76F]">
-                    Track
-                  </span>
+                <div className="w-[100px] flex-shrink-0 md:w-[140px]">
+                  <img
+                    src={track.image}
+                    alt={track.title}
+                    className="h-[120px] w-full rounded-lg object-cover md:h-[160px]"
+                  />
                 </div>
-                <div className="mt-5 space-y-3 text-[#D0D0D0]">
-                  <p>
-                    <strong className="text-white">Vibe Archive:</strong> {track.vibe}
-                  </p>
-                  <p>
-                    <strong className="text-white">Credits:</strong> {track.credits}
-                  </p>
+                <div className="flex flex-1 flex-col">
+                  <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                    <div>
+                      <p className="text-[14px] font-black uppercase tracking-[0.14em] text-[#F6B76F]">
+                        {track.title}
+                      </p>
+                      <h3 className="mt-1 text-xl font-bold text-white">{track.subtitle}</h3>
+                    </div>
+                    <span className="w-fit border border-[#F6B76F]/40 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#F6B76F]">
+                      Track
+                    </span>
+                  </div>
+                  <div className="mt-5 space-y-3 text-[14px] text-[#D0D0D0]">
+                    <p>
+                      <strong className="text-white">Vibe Archive:</strong> {track.vibe}
+                    </p>
+                    <p>
+                      <strong className="text-white">Credits:</strong> {track.credits}
+                    </p>
+                  </div>
+                  {"links" in track && track.links ? (
+                    <div className="mt-6 flex flex-wrap gap-2 xl:flex-nowrap">
+                      {track.links.map((platform) => (
+                        <a
+                          key={platform.name}
+                          href={platform.href}
+                          target="_blank"
+                          rel="noreferrer"
+                          aria-label={`${track.title} on ${platform.name}`}
+                          className="inline-flex min-h-8 shrink-0 items-center justify-center border border-[#F6B76F]/45 bg-black/30 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-[#F6B76F] transition hover:border-[#F6B76F] hover:bg-[#F6B76F] hover:text-black"
+                        >
+                          {platform.name}
+                        </a>
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
               </article>
             ))}
@@ -368,7 +432,7 @@ function LandingContent() {
           <h2 className="text-4xl font-bold capitalize leading-tight text-[#F6B76F] md:text-[64px] md:leading-[55px]">
             Experience The Darkness
           </h2>
-          <p className="max-w-[885px] text-base font-normal capitalize leading-[31px] text-white md:text-xl">
+          <p className="max-w-[885px] text-[14px] font-normal capitalize leading-[31px] text-white md:text-[14px]">
             Andharan promises a haunting cinematic experience blending suspense, romance, emotional
             storytelling, and unforgettable music.
           </p>
@@ -487,10 +551,10 @@ function TheatricalCreditsCarousel() {
               className="flex shrink-0 items-center justify-center rounded-[10px] border border-[#F6B76F]/30 bg-white/[0.06] px-4 py-4 backdrop-blur-sm min-w-fit"
             >
               <div className="text-center">
-                <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#F6B76F]">
+                <p className="text-[14px] font-semibold uppercase tracking-[0.1em] text-[#F6B76F]">
                   {credit.role}
                 </p>
-                <p className="mt-1 text-xs font-medium text-white">{credit.name}</p>
+                <p className="mt-1 text-[14px] font-medium text-white">{credit.name}</p>
               </div>
             </div>
           ))}
@@ -521,7 +585,7 @@ function TheatricalCreditsCarousel() {
 function SectionHeading({ eyebrow, title }: { eyebrow: string; title: ReactNode }) {
   return (
     <div className="mx-auto flex max-w-[950px] flex-col items-center gap-2.5 text-center">
-      <p className="text-base font-black uppercase leading-[30px] text-white">{eyebrow}</p>
+      <p className="text-[14px] font-black uppercase leading-[30px] text-white">{eyebrow}</p>
       <h2 className="text-3xl font-black uppercase leading-tight text-white md:text-4xl">
         {title}
       </h2>
@@ -624,10 +688,10 @@ function ProfileCard({
           </p>
           <div
             className={`w-full overflow-hidden transition-[max-height] duration-500 ease-in-out ${
-              expanded ? "max-h-[420px]" : "max-h-[36px]"
+              expanded ? "max-h-[550px]" : "max-h-[56px]"
             }`}
           >
-            <p className="text-center text-xs font-normal capitalize leading-[18px] text-white">
+            <p className="text-center text-[14px] font-normal capitalize leading-[24px] text-white">
               {body}
             </p>
           </div>
