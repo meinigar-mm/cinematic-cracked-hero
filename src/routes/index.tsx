@@ -1,14 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
-import {
-  Instagram,
-  Linkedin,
-  Github,
-  Mail,
-  Twitter,
-  Youtube,
-  Facebook,
-} from "lucide-react";
+import { Instagram, Linkedin, Github, Mail, Twitter, Youtube, Facebook } from "lucide-react";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
@@ -28,6 +20,8 @@ import heroineImage from "@/assets/heroine_img.png";
 import moviePoster from "@/assets/movie_poster.png";
 
 const etherealMysteryVideo = "/assets/0_Ethereal_Mysterious_1920x1080.mp4";
+const motionPosterYoutubeEmbedUrl =
+  "https://www.youtube.com/embed/jfBI89A8EUI?rel=0&modestbranding=1";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -151,7 +145,7 @@ const team = [
   short films, advertising, and high-tier television drama production. After serving as a
   crucial assistant director under the acclaimed filmmaker Bramma, Santhosh
   achieved massive digital success with his award-winning short film "Nediya
-  kazhiyum ira"—which garnered over 8 million views on Behindwoods and claimed
+  kazhiyum ira" - which garnered over 8 million views on Behindwoods and claimed
   15 national awards. Andharan stands as his feature directorial showcase.`,
     image: creativeOneImage,
     position: "center",
@@ -162,7 +156,7 @@ const team = [
   {
     title: "Music Director",
     name: "Hari S R",
-    body: `The complex emotional and terrifying atmosphere of Andharan is orchestrated by modern cinema’s dynamic music director and programmer, Hari S R. Known for his atmospheric composition styles in films like Kaalangalil Aval Vasantham and Akkaran, as well as his rich background scoring work for Soodhu Kavvum 2, Hari builds intricate acoustic worlds. As a long-standing creative associate of legendary music director Thaman S, his technical expertise and arrangements have shaped over 100 of Indian cinema’s most massive modern soundtracks, including Guntur Kaaram, OG, Game Changer, RajaSaab, and Akhanda 2.`,
+    body: `The complex emotional and terrifying atmosphere of Andharan is orchestrated by modern cinema's dynamic music director and programmer, Hari S R. Known for his atmospheric composition styles in films like Kaalangalil Aval Vasantham and Akkaran, as well as his rich background scoring work for Soodhu Kavvum 2, Hari builds intricate acoustic worlds. As a long-standing creative associate of legendary music director Thaman S, his technical expertise and arrangements have shaped over 100 of Indian cinema's most massive modern soundtracks, including Guntur Kaaram, OG, Game Changer, RajaSaab, and Akhanda 2.`,
     image: creativeTwoImage,
     position: "center",
     social: {
@@ -182,7 +176,7 @@ const team = [
   {
     title: "Editor",
     name: "Ignaitious Aswin",
-    body: `The intense pacing, tension, and structural design of Andharan are crafted by master film editor Ignaitious Aswin. Celebrated for his exceptional sense of visual rhythm and storytelling structure, Aswin’s editing portfolio features some of the most stylistically distinct films in modern cinema, including Kadaseela Biriyani, Soodhu Kavvum 2, Pizza 3, Pubgoa, Pechi, and Kottravai.`,
+    body: `The intense pacing, tension, and structural design of Andharan are crafted by master film editor Ignaitious Aswin. Celebrated for his exceptional sense of visual rhythm and storytelling structure, Aswin's editing portfolio features some of the most stylistically distinct films in modern cinema, including Kadaseela Biriyani, Soodhu Kavvum 2, Pizza 3, Pubgoa, Pechi, and Kottravai.`,
     image: creativeFourImage,
     position: "center",
     social: {
@@ -227,23 +221,23 @@ const soundscapeTracks = [
   {
     title: "TRACK 01: CHELLA PULLA",
     subtitle: "The Heartbeat of First Love",
-    vibe: "A dream-like, incredibly soothing love melody that opens a window into the heroine's deepest romantic vulnerabilities. The piece captures an innocent, subtle charm through tender vocal landscapes.",
-    credits: "Vocals by Chinmayi | Lyrics by Mohan Rajan",
+    vibe: "A vibrant, highly nostalgic, and energetic track capturing the hero's early teenage years. It serves as a playful, charming ode to the innocent obsession of unrequited, youthful love.",
+    credits: "Vocals by Aravind Srinivas | Lyrics by Hariharan",
     image: moviePoster,
     links: chellaPullaLinks,
   },
   {
-    title: "TRACK 02: NILAVIN OLI NEEYADI",
-    subtitle: "The Protector's Confession",
-    vibe: "A deeply expressive, soul-stirring montage track presented entirely from the hero's perspective. It weaves a delicate narrative of quiet admiration and protective, enduring love.",
-    credits: "Vocals by Vijay Narain | Lyrics by Karthik Netha",
+    title: "TRACK 02: ADADA THIRUDA",
+    subtitle: "The Echo of Youth",
+    vibe: "A dream-like, incredibly soothing love melody that opens a window into the heroine's deepest romantic vulnerabilities. The piece captures an innocent, subtle charm through tender vocal landscapes.",
+    credits: "Vocals by Chinmayi | Lyrics by Mohan Rajan",
     image: moviePoster,
   },
   {
-    title: "TRACK 03: ADADA THIRUDA",
-    subtitle: "The Echo of Youth",
-    vibe: "A vibrant, highly nostalgic, and energetic track capturing the hero's early teenage years. It serves as a playful, charming ode to the innocent obsession of unrequited, youthful love.",
-    credits: "Vocals by Aravind Srinivas | Lyrics by Hariharan",
+    title: "TRACK 03: NILAVIN OLI NEEYADI",
+    subtitle: "The Protector's Confession",
+    vibe: "A deeply expressive, soul-stirring montage track presented entirely from the hero's perspective. It weaves a delicate narrative of quiet admiration and protective, enduring love.",
+    credits: "Vocals by Vijay Narain | Lyrics by Karthik Netha",
     image: moviePoster,
   },
 ];
@@ -336,7 +330,7 @@ function LandingContent() {
                 <div className="flex flex-1 flex-col">
                   <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                     <div>
-                      <p className="text-[14px] font-black uppercase tracking-[0.14em] text-[#F6B76F]">
+                      <p className="text-[14px] font-[800] uppercase tracking-[0.18em] text-[#F6B76F]">
                         {track.title}
                       </p>
                       <h3 className="mt-1 text-xl font-bold text-white">{track.subtitle}</h3>
@@ -376,8 +370,41 @@ function LandingContent() {
         </div>
       </section>
 
+      <section
+        id="movie-motion-poster"
+        className="scroll-mt-24 bg-black px-6 py-20 text-white md:py-24"
+      >
+        <SectionHeading
+          eyebrow="Movie Motion Poster"
+          title={
+            <>
+              The Hunter Is <span className="text-[#F6B76F]">Coming</span>
+            </>
+          }
+        />
+        <div className="mx-auto mt-12 max-w-[1080px]">
+          <div className="overflow-hidden border border-[#F6B76F]/30 bg-white/[0.04] shadow-[0_28px_90px_rgba(0,0,0,0.5)]">
+            <iframe
+              className="aspect-video w-full"
+              src={motionPosterYoutubeEmbedUrl}
+              title="Andharan Movie Motion Poster"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            />
+          </div>
+        </div>
+      </section>
+
       <section id="main-characters" className="scroll-mt-24 bg-black px-6 pb-[100px] pt-[106px]">
-        <SectionHeading eyebrow="Main Characters" title="The Faces Behind The Mystery" />
+        <SectionHeading
+          eyebrow="Main Characters"
+          title={
+            <>
+              The Faces Behind <span className="text-[#F6B76F]">The Mystery</span>
+            </>
+          }
+        />
         <div className="mx-auto mt-[72px] grid max-w-[1250px] grid-cols-1 justify-items-center gap-[30px] sm:grid-cols-2 lg:grid-cols-4">
           {characters.map((character, index) => (
             <ProfileCard key={`${character.name}-${index}`} {...character} imageSize="cover" />
@@ -503,7 +530,7 @@ function TheatricalCreditsCarousel() {
   const credits = [
     { role: "SHRI KRISH PICTURES", name: "Presents" },
     { role: "Production Banner", name: " M.K. SAMBASIVAM" },
-    { role: "Starring", name: "PRAJIN – IVANA" },
+    { role: "Starring", name: "PRAJIN - IVANA" },
     { role: "Written & Directed by", name: "SANTHOSH RAAVANAN" },
     { role: "Produced by", name: "M.K. SAMBASIVAM" },
     {
