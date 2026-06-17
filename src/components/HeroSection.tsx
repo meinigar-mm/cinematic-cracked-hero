@@ -84,12 +84,15 @@ export default function HeroSection() {
           >
             Explore
           </a>
-          <button
-            className="w-[120px] h-[38px] rounded-[5px] border border-primary text-primary text-xs font-medium capitalize hover:bg-primary hover:text-[#1D1D1D] transition"
+          <a
+            href="https://www.youtube.com/watch?v=KOE_xN_DMio"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex w-[120px] h-[38px] items-center justify-center rounded-[5px] border border-primary text-primary text-xs font-medium capitalize hover:bg-primary hover:text-[#1D1D1D] transition"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
             Watch Trailer
-          </button>
+          </a>
         </motion.div>
 
         {/* Scroll hint */}
