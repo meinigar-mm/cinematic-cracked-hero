@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
-import { Instagram, Linkedin, Github, Mail, Twitter, Youtube, Facebook } from "lucide-react";
+import { Instagram, Linkedin, Github, Mail, Play, Twitter, Youtube, Facebook } from "lucide-react";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
@@ -20,8 +20,44 @@ import heroineImage from "@/assets/heroine_img.png";
 import moviePoster from "@/assets/movie_poster.png";
 
 const etherealMysteryVideo = "/assets/0_Ethereal_Mysterious_1920x1080.mp4";
-const motionPosterYoutubeEmbedUrl =
-  "https://www.youtube.com/embed/jfBI89A8EUI?rel=0&modestbranding=1";
+
+type YouTubeVideo = {
+  id: string;
+  title: string;
+  embedUrl: string;
+  thumbnailUrl: string;
+};
+
+const getYoutubeThumbnailUrl = (videoId: string) =>
+  `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+
+const motionPosterVideo: YouTubeVideo = {
+  id: "motion-poster",
+  title: "Andharan Movie Motion Poster",
+  embedUrl: "https://www.youtube.com/embed/jfBI89A8EUI?rel=0&modestbranding=1",
+  thumbnailUrl: getYoutubeThumbnailUrl("jfBI89A8EUI"),
+};
+
+const lyricalSongVideos: YouTubeVideo[] = [
+  {
+    id: "lyrical-chella-pulla",
+    title: "Chella Pulla",
+    embedUrl: "https://www.youtube.com/embed/jOWR4uHjGp4?rel=0&modestbranding=1",
+    thumbnailUrl: getYoutubeThumbnailUrl("jOWR4uHjGp4"),
+  },
+  {
+    id: "lyrical-adada-thiruda",
+    title: "Adada Thiruda",
+    embedUrl: "https://www.youtube.com/embed/VdFkjrWYevA?rel=0&modestbranding=1",
+    thumbnailUrl: getYoutubeThumbnailUrl("VdFkjrWYevA"),
+  },
+  {
+    id: "lyrical-nilavin-oli-neeyadi",
+    title: "Mudiya Oli Neeyadi",
+    embedUrl: "https://www.youtube.com/embed/hC2cBv9M4uQ?rel=0&modestbranding=1",
+    thumbnailUrl: getYoutubeThumbnailUrl("hC2cBv9M4uQ"),
+  },
+];
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -192,6 +228,10 @@ type MusicPlatformLink = {
 
 const chellaPullaLinks: MusicPlatformLink[] = [
   {
+    name: "Spotify",
+    href: "https://open.spotify.com/album/6rR9J13NCj1VQUQsruiNzr",
+  },
+  {
     name: "Apple Music",
     href: "https://music.apple.com/us/album/chella-pulla/6775104427?i=6775104431",
   },
@@ -217,6 +257,61 @@ const chellaPullaLinks: MusicPlatformLink[] = [
   },
 ];
 
+const adadaThirudaLinks: MusicPlatformLink[] = [
+  {
+    name: "Apple Music",
+    href: "https://music.apple.com/us/album/adada-thiruda-single/6777979814",
+  },
+  {
+    name: "YouTube Music",
+    href: "https://music.youtube.com/watch?v=EtpTJnLwRbE&si=1KA2fyz4sqVpjkla",
+  },
+  {
+    name: "Gaana",
+    href: "https://gaana.com/song/adada-thiruda",
+  },
+  {
+    name: "Amazon Music",
+    href: "https://music.amazon.in/albums/B0H4GQPJNQ?marketplaceId=A3K6Y4MI8GDYMT&musicTerritory=IN&ref=dm_sh_KYpOtsI9imDeeCNxxwnbIZoSh&trackAsin=B0H4GNYJG8",
+  },
+  {
+    name: "JioSaavn",
+    href: "https://www.jiosaavn.com/song/adada-thiruda/OyoSQitUfnY",
+  },
+];
+
+const nilavinOliNeeyadiLinks: MusicPlatformLink[] = [
+  {
+    name: "Spotify",
+    href: "https://open.spotify.com/track/6o4ccjcAZ7CoLkPg2lo0PG",
+  },
+  {
+    name: "Apple Music",
+    href: "https://music.apple.com/us/album/andharan/6777903583?i=6777903590&uo=4",
+  },
+  {
+    name: "Gaana",
+    href: "https://gaana.com/nilavin-oli-neeyadi",
+  },
+  {
+    name: "JioSaavn",
+    href: "https://www.jiosaavn.com/song/nilavin-oli-neeyadi/PR0KBgNoYHk",
+  },
+  {
+    name: "Shazam",
+    href: "https://www.shazam.com/song/6777903590/andharan",
+  },
+
+  {
+    name: "YouTube Music",
+    href: "https://music.youtube.com/watch?v=JMexkGDrL5k",
+  },
+  {
+    name: "Amazon Music",
+    href: "https://music.amazon.in/tracks/B0H4FY427G?marketplaceId=A21TJRUUN4KGV&musicTerritory=IN&ref=dm_sh_xbEoMvWJortwf6qW8cTUaUEgz",
+  },
+];
+
 const soundscapeTracks = [
   {
     title: "TRACK 01: CHELLA PULLA",
@@ -232,17 +327,27 @@ const soundscapeTracks = [
     vibe: "A dream-like, incredibly soothing love melody that opens a window into the heroine's deepest romantic vulnerabilities. The piece captures an innocent, subtle charm through tender vocal landscapes.",
     credits: "Vocals by Chinmayi | Lyrics by Mohan Rajan",
     image: moviePoster,
+    links: adadaThirudaLinks,
   },
   {
-    title: "TRACK 03: NILAVIN OLI NEEYADI",
+    title: "TRACK 03: MUDIYA OLI NEEYADI",
     subtitle: "The Protector's Confession",
     vibe: "A deeply expressive, soul-stirring montage track presented entirely from the hero's perspective. It weaves a delicate narrative of quiet admiration and protective, enduring love.",
     credits: "Vocals by Vijay Narain | Lyrics by Karthik Netha",
     image: moviePoster,
+    links: nilavinOliNeeyadiLinks,
   },
 ];
 
 function LandingContent() {
+  const [activeVideoId, setActiveVideoId] = useState(motionPosterVideo.id);
+  const [autoplayVideoId, setAutoplayVideoId] = useState<string | null>(null);
+
+  const playVideo = (videoId: string) => {
+    setActiveVideoId(videoId);
+    setAutoplayVideoId(videoId);
+  };
+
   return (
     <>
       <section
@@ -383,16 +488,38 @@ function LandingContent() {
           }
         />
         <div className="mx-auto mt-12 max-w-[1080px]">
-          <div className="overflow-hidden border border-[#F6B76F]/30 bg-white/[0.04] shadow-[0_28px_90px_rgba(0,0,0,0.5)]">
-            <iframe
-              className="aspect-video w-full"
-              src={motionPosterYoutubeEmbedUrl}
-              title="Andharan Movie Motion Poster"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
+          <YouTubeVideoCard
+            video={motionPosterVideo}
+            active={activeVideoId === motionPosterVideo.id}
+            autoplay={autoplayVideoId === motionPosterVideo.id}
+            onPlay={playVideo}
+          />
+        </div>
+      </section>
+
+      <section
+        id="movie-lyrical-songs"
+        className="scroll-mt-24 bg-black px-6 py-20 text-white md:py-24"
+      >
+        <SectionHeading
+          eyebrow="Movie Lyrical Songs"
+          title={
+            <>
+              Movie <span className="text-[#F6B76F]">Lyrical Songs</span>
+            </>
+          }
+        />
+        <div className="mx-auto mt-12 grid max-w-[1080px] gap-6 lg:grid-cols-2">
+          {lyricalSongVideos.map((video, index) => (
+            <YouTubeVideoCard
+              key={video.title}
+              video={video}
+              active={activeVideoId === video.id}
+              autoplay={autoplayVideoId === video.id}
+              onPlay={playVideo}
+              className={index === 2 ? "lg:col-span-2 lg:mx-auto lg:w-1/2" : ""}
             />
-          </div>
+          ))}
         </div>
       </section>
 
@@ -617,6 +744,61 @@ function SectionHeading({ eyebrow, title }: { eyebrow: string; title: ReactNode 
         {title}
       </h2>
     </div>
+  );
+}
+
+function YouTubeVideoCard({
+  video,
+  active,
+  autoplay,
+  onPlay,
+  className = "",
+}: {
+  video: YouTubeVideo;
+  active: boolean;
+  autoplay: boolean;
+  onPlay: (videoId: string) => void;
+  className?: string;
+}) {
+  const iframeSrc = autoplay ? `${video.embedUrl}&autoplay=1` : video.embedUrl;
+
+  return (
+    <article
+      className={`overflow-hidden border border-[#F6B76F]/30 bg-white/[0.04] shadow-[0_28px_90px_rgba(0,0,0,0.5)] ${className}`}
+    >
+      {active ? (
+        <iframe
+          className="aspect-video w-full"
+          src={iframeSrc}
+          title={video.title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerPolicy="strict-origin-when-cross-origin"
+          allowFullScreen
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => onPlay(video.id)}
+          className="group relative block aspect-video w-full overflow-hidden bg-black text-left"
+          aria-label={`Play ${video.title}`}
+        >
+          <img
+            src={video.thumbnailUrl}
+            alt=""
+            className="h-full w-full object-cover opacity-75 transition duration-300 group-hover:scale-105 group-hover:opacity-90"
+          />
+          <span className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-black/10" />
+          <span className="absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[#F6B76F]/60 bg-black/60 text-[#F6B76F] transition group-hover:bg-[#F6B76F] group-hover:text-black">
+            <Play className="ml-1 h-7 w-7 fill-current" aria-hidden="true" />
+          </span>
+        </button>
+      )}
+      <div className="border-t border-[#F6B76F]/25 px-5 py-4">
+        <h3 className="text-[14px] font-[800] uppercase tracking-[0.18em] text-[#F6B76F]">
+          {video.title}
+        </h3>
+      </div>
+    </article>
   );
 }
 

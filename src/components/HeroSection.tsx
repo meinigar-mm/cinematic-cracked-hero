@@ -31,8 +31,9 @@ export default function HeroSection() {
       />
 
       {/* Cinematic gradient overlays for left-side text legibility */}
-      <div className="absolute inset-0 z-10 bg-gradient-to-r from-background/75 via-background/40 to-transparent" />
+      <div className="absolute inset-0 z-10 bg-gradient-to-r from-background/90 via-background/60 to-transparent" />
       <div className="absolute inset-0 z-10 bg-gradient-to-t from-background/50 via-transparent to-background/15" />
+      <div className="absolute inset-0 z-10 bg-black/25 md:bg-transparent" />
 
       {/* Cracked glass — scroll-driven */}
       <GlassOverlay targetRef={heroRef} />
@@ -43,7 +44,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
-          className="font-bold text-white max-w-[569px] text-4xl md:text-5xl leading-[1.15] tracking-tight"
+          className="font-bold text-white max-w-[569px] text-3xl sm:text-4xl md:text-5xl leading-[1.15] tracking-tight"
           style={{ fontFamily: "'Inter', sans-serif" }}
         >
           A Haunting Tale of Love and <span className="text-primary">Darkness</span>
@@ -53,11 +54,21 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.9, ease: "easeOut" }}
-          className="mt-5 max-w-[492px] text-base font-medium leading-[22px] text-[#B1B1B1]"
+          className="mt-4 max-w-[320px] sm:max-w-[492px] text-sm sm:text-base font-medium leading-6 text-[#B1B1B1]"
           style={{ fontFamily: "'Inter', sans-serif" }}
         >
           In a world haunted by fear and unexplained deaths, one man returns to save the woman he
           never stopped loving.
+        </motion.p>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 1.05, ease: "easeOut" }}
+          className="mt-3 text-sm font-bold uppercase tracking-[0.18em] text-primary md:text-base"
+          style={{ fontFamily: "'Inter', sans-serif" }}
+        >
+          Only in cinemas June 26th
         </motion.p>
 
         <motion.div

@@ -68,9 +68,14 @@ export default function Navbar() {
           ))}
         </ul>
         <div className="flex shrink-0 items-center gap-3">
-          <button className="bg-primary text-primary-foreground text-[10px] tracking-[0.18em] font-semibold px-4 py-2.5 rounded-sm hover:brightness-110 transition sm:text-xs sm:px-5">
+          <a
+            href="https://in.bookmyshow.com/movies/chennai/andharan/ET00503338"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-primary text-primary-foreground text-[10px] tracking-[0.18em] font-semibold px-4 py-2.5 rounded-sm hover:brightness-110 transition sm:text-xs sm:px-5"
+          >
             BOOK NOW
-          </button>
+          </a>
           <button
             type="button"
             aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
