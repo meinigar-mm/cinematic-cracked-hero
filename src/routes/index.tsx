@@ -1,6 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, type ReactNode } from "react";
-import { Instagram, Linkedin, Github, Mail, Play, Twitter, Youtube, Facebook } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Instagram,
+  Linkedin,
+  Github,
+  Mail,
+  Play,
+  Twitter,
+  Youtube,
+  Facebook,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
@@ -28,8 +39,223 @@ type YouTubeVideo = {
   thumbnailUrl: string;
 };
 
+type YouTubeApiVideo = {
+  id?: string | { videoId?: string };
+  snippet: {
+    title: string;
+    description: string;
+    publishedAt?: string;
+    resourceId?: {
+      videoId?: string;
+    };
+    thumbnails?: {
+      high?: {
+        url: string;
+      };
+      medium?: {
+        url: string;
+      };
+      default?: {
+        url: string;
+      };
+    };
+  };
+};
+
+type MovieUpdateVideo = YouTubeVideo & {
+  description: string;
+  publishedAt?: string;
+};
+
+class YouTubeApiError extends Error {
+  status: number;
+  reason?: string;
+
+  constructor(status: number, message: string, reason?: string) {
+    super(message);
+    this.name = "YouTubeApiError";
+    this.status = status;
+    this.reason = reason;
+  }
+}
+
+const youtubeEnv = import.meta.env as Record<string, string | undefined>;
+const getEnvValue = (key: string) => {
+  const value = youtubeEnv[key]?.trim();
+
+  return value ? value : undefined;
+};
+
+const youtubeApiKey = getEnvValue("VITE_YOUTUBE_API_KEY");
+const youtubeChannelId = getEnvValue("VITE_YOUTUBE_CHANNEL_ID");
+const youtubeChannelHandle = getEnvValue("VITE_YOUTUBE_CHANNEL_HANDLE") ?? "@OmliEntertainment";
+const youtubeUploadsPlaylistId = getEnvValue("VITE_YOUTUBE_UPLOADS_PLAYLIST_ID");
+const youtubeAndharanPlaylistId = getEnvValue("VITE_YOUTUBE_ANDHARAN_PLAYLIST_ID");
+const youtubeApiBaseUrl = "https://www.googleapis.com/youtube/v3";
+const youtubeChannelUrl = `https://www.youtube.com/${youtubeChannelHandle}/videos`;
+
 const getYoutubeThumbnailUrl = (videoId: string) =>
   `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+
+const filterAndharanVideos = <T extends { snippet: { title: string; description: string } }>(
+  videos: T[],
+) =>
+  videos.filter((video) => {
+    const title = video.snippet.title.toLowerCase();
+    const description = video.snippet.description.toLowerCase();
+
+    return title.includes("andharan") || description.includes("andharan");
+  });
+
+const getVideoIdFromApiVideo = (video: YouTubeApiVideo) => {
+  if (video.snippet.resourceId?.videoId) return video.snippet.resourceId.videoId;
+  if (typeof video.id === "string") return video.id;
+  return video.id?.videoId ?? "";
+};
+
+const getThumbnailFromApiVideo = (video: YouTubeApiVideo, videoId: string) =>
+  video.snippet.thumbnails?.high?.url ??
+  video.snippet.thumbnails?.medium?.url ??
+  video.snippet.thumbnails?.default?.url ??
+  getYoutubeThumbnailUrl(videoId);
+
+const mapApiVideoToMovieUpdate = (video: YouTubeApiVideo): MovieUpdateVideo | null => {
+  const videoId = getVideoIdFromApiVideo(video);
+
+  if (!videoId) return null;
+
+  return {
+    id: `movie-update-${videoId}`,
+    title: video.snippet.title,
+    description: video.snippet.description,
+    publishedAt: video.snippet.publishedAt,
+    embedUrl: `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`,
+    thumbnailUrl: getThumbnailFromApiVideo(video, videoId),
+  };
+};
+
+async function fetchYoutubeJson<T>(url: string) {
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    let message = `YouTube request failed with status ${response.status}`;
+    let reason: string | undefined;
+
+    try {
+      const data = (await response.json()) as {
+        error?: {
+          message?: string;
+          errors?: Array<{ reason?: string }>;
+        };
+      };
+
+      message = data.error?.message ?? message;
+      reason = data.error?.errors?.[0]?.reason;
+    } catch {
+      // Keep the status-only message when YouTube does not return JSON.
+    }
+
+    throw new YouTubeApiError(response.status, message, reason);
+  }
+
+  return (await response.json()) as T;
+}
+
+async function getUploadsPlaylistFromChannelParams(channelParams: URLSearchParams) {
+  channelParams.set("part", "contentDetails");
+  channelParams.set("key", youtubeApiKey ?? "");
+
+  const channelData = await fetchYoutubeJson<{
+    items?: Array<{ contentDetails?: { relatedPlaylists?: { uploads?: string } } }>;
+  }>(`${youtubeApiBaseUrl}/channels?${channelParams.toString()}`);
+
+  return channelData.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
+}
+
+async function resolveChannelIdFromSearch() {
+  const params = new URLSearchParams({
+    part: "snippet",
+    maxResults: "1",
+    q: youtubeChannelHandle.replace(/^@/, ""),
+    type: "channel",
+    key: youtubeApiKey ?? "",
+  });
+
+  const data = await fetchYoutubeJson<{
+    items?: Array<{ snippet?: { channelId?: string } }>;
+  }>(`${youtubeApiBaseUrl}/search?${params.toString()}`);
+
+  return data.items?.[0]?.snippet?.channelId;
+}
+
+async function resolveUploadsPlaylistId() {
+  if (youtubeUploadsPlaylistId) return youtubeUploadsPlaylistId;
+
+  if (youtubeChannelId) {
+    const uploadsPlaylistId = await getUploadsPlaylistFromChannelParams(
+      new URLSearchParams({ id: youtubeChannelId }),
+    );
+
+    if (uploadsPlaylistId) return uploadsPlaylistId;
+  }
+
+  const handleCandidates = [youtubeChannelHandle, youtubeChannelHandle.replace(/^@/, "")].filter(
+    (handle, index, handles) => handle && handles.indexOf(handle) === index,
+  );
+
+  for (const handle of handleCandidates) {
+    try {
+      const uploadsPlaylistId = await getUploadsPlaylistFromChannelParams(
+        new URLSearchParams({ forHandle: handle }),
+      );
+
+      if (uploadsPlaylistId) return uploadsPlaylistId;
+    } catch {
+      // Some YouTube API accounts reject one handle format; try the next fallback.
+    }
+  }
+
+  const searchedChannelId = await resolveChannelIdFromSearch();
+
+  if (searchedChannelId) {
+    const uploadsPlaylistId = await getUploadsPlaylistFromChannelParams(
+      new URLSearchParams({ id: searchedChannelId }),
+    );
+
+    if (uploadsPlaylistId) return uploadsPlaylistId;
+  }
+
+  throw new Error("Could not resolve the Omli Entertainment uploads playlist.");
+}
+
+async function fetchPlaylistVideos(playlistId: string) {
+  const params = new URLSearchParams({
+    part: "snippet",
+    maxResults: "25",
+    playlistId,
+    key: youtubeApiKey ?? "",
+  });
+
+  const data = await fetchYoutubeJson<{ items?: YouTubeApiVideo[] }>(
+    `${youtubeApiBaseUrl}/playlistItems?${params.toString()}`,
+  );
+
+  return data.items ?? [];
+}
+
+async function fetchAndharanMovieUpdates() {
+  if (!youtubeApiKey) {
+    throw new Error("YouTube API key is not configured.");
+  }
+
+  const playlistId = youtubeAndharanPlaylistId ?? (await resolveUploadsPlaylistId());
+  const videos = await fetchPlaylistVideos(playlistId);
+  const filteredVideos = youtubeAndharanPlaylistId ? videos : filterAndharanVideos(videos);
+
+  return filteredVideos
+    .map(mapApiVideoToMovieUpdate)
+    .filter((video): video is MovieUpdateVideo => Boolean(video));
+}
 
 const motionPosterVideo: YouTubeVideo = {
   id: "motion-poster",
@@ -37,6 +263,40 @@ const motionPosterVideo: YouTubeVideo = {
   embedUrl: "https://www.youtube.com/embed/jfBI89A8EUI?rel=0&modestbranding=1",
   thumbnailUrl: getYoutubeThumbnailUrl("jfBI89A8EUI"),
 };
+
+const trailerCarouselVideos: YouTubeVideo[] = [
+  {
+    id: "trailer-preview",
+    title: "Andharan Trailer",
+    embedUrl: "https://www.youtube.com/embed/KOE_xN_DMio?rel=0&modestbranding=1",
+    thumbnailUrl: getYoutubeThumbnailUrl("KOE_xN_DMio"),
+  },
+  motionPosterVideo,
+];
+
+const fallbackAndharanMovieUpdates: MovieUpdateVideo[] = [
+  {
+    id: "movie-update-trailer-preview",
+    title: "Andharan Trailer",
+    description: "Official Andharan trailer.",
+    embedUrl: "https://www.youtube.com/embed/KOE_xN_DMio?rel=0&modestbranding=1",
+    thumbnailUrl: getYoutubeThumbnailUrl("KOE_xN_DMio"),
+  },
+  {
+    id: "movie-update-motion-poster",
+    title: "Andharan Movie Motion Poster",
+    description: "Andharan movie motion poster.",
+    embedUrl: "https://www.youtube.com/embed/jfBI89A8EUI?rel=0&modestbranding=1",
+    thumbnailUrl: getYoutubeThumbnailUrl("jfBI89A8EUI"),
+  },
+  {
+    id: "movie-update-nilavin-oli-neeyadi",
+    title: "Nilavin Oli Neeyadi",
+    description: "Andharan lyrical video.",
+    embedUrl: "https://www.youtube.com/embed/hC2cBv9M4uQ?rel=0&modestbranding=1",
+    thumbnailUrl: getYoutubeThumbnailUrl("hC2cBv9M4uQ"),
+  },
+];
 
 const lyricalSongVideos: YouTubeVideo[] = [
   {
@@ -53,7 +313,7 @@ const lyricalSongVideos: YouTubeVideo[] = [
   },
   {
     id: "lyrical-nilavin-oli-neeyadi",
-    title: "Mudiya Oli Neeyadi",
+    title: "Nilavin Oli Neeyadi",
     embedUrl: "https://www.youtube.com/embed/hC2cBv9M4uQ?rel=0&modestbranding=1",
     thumbnailUrl: getYoutubeThumbnailUrl("hC2cBv9M4uQ"),
   },
@@ -229,7 +489,7 @@ type MusicPlatformLink = {
 const chellaPullaLinks: MusicPlatformLink[] = [
   {
     name: "Spotify",
-    href: "https://open.spotify.com/album/6rR9J13NCj1VQUQsruiNzr",
+    href: "https://open.spotify.com/track/64ZeesV5SMWfSA7qvkj51S",
   },
   {
     name: "Apple Music",
@@ -237,19 +497,19 @@ const chellaPullaLinks: MusicPlatformLink[] = [
   },
   {
     name: "YouTube Music",
-    href: "https://music.youtube.com/watch?v=Xi2jSwpkEio&si=1h0EVykP92ftk_LA",
+    href: "https://music.youtube.com/watch?v=3wWUhSBpUU4",
   },
   {
     name: "Gaana",
-    href: "https://gaana.com/song/chella-pulla-4073-7589",
+    href: "https://gaana.com/song/chella-pulla-0294-7614",
   },
   {
     name: "Amazon Music",
-    href: "https://music.amazon.in/tracks/B0H3GTGNSV?marketplaceId=A21TJRUUN4KGV&musicTerritory=IN&ref=dm_sh_cye9gmYD7RnpdBIJ4O8VFyeDw",
+    href: "https://www.amazon.in/music/player/albums/B0H4HPRDXP?marketplaceId=A3K6Y4MI8GDYMT&musicTerritory=IN&ref=dm_sh_s9e4vaaU7e6ekwXV2b1ziBgue&trackAsin=B0H4HPD8JJ",
   },
   {
     name: "JioSaavn",
-    href: "https://www.jiosaavn.com/song/chella-pulla/GwABeDd-Amk",
+    href: "https://www.jiosaavn.com/song/chella-pulla/EQkzCEcAYUo",
   },
   {
     name: "iTunes",
@@ -258,6 +518,11 @@ const chellaPullaLinks: MusicPlatformLink[] = [
 ];
 
 const adadaThirudaLinks: MusicPlatformLink[] = [
+  {
+    name: "Spotify",
+    href: "https://open.spotify.com/album/1gCqHt3QJP3tL15BQrxno4",
+  },
+
   {
     name: "Apple Music",
     href: "https://music.apple.com/us/album/adada-thiruda-single/6777979814",
@@ -330,7 +595,7 @@ const soundscapeTracks = [
     links: adadaThirudaLinks,
   },
   {
-    title: "TRACK 03: MUDIYA OLI NEEYADI",
+    title: "TRACK 03: NILAVIN OLI NEEYADI",
     subtitle: "The Protector's Confession",
     vibe: "A deeply expressive, soul-stirring montage track presented entirely from the hero's perspective. It weaves a delicate narrative of quiet admiration and protective, enduring love.",
     credits: "Vocals by Vijay Narain | Lyrics by Karthik Netha",
@@ -342,11 +607,80 @@ const soundscapeTracks = [
 function LandingContent() {
   const [activeVideoId, setActiveVideoId] = useState(motionPosterVideo.id);
   const [autoplayVideoId, setAutoplayVideoId] = useState<string | null>(null);
+  const [trailerSlideIndex, setTrailerSlideIndex] = useState(0);
+  const [trailerCarouselPaused, setTrailerCarouselPaused] = useState(false);
+  const [movieUpdateVideos, setMovieUpdateVideos] = useState<MovieUpdateVideo[]>([]);
+  const [movieUpdatesLoading, setMovieUpdatesLoading] = useState(true);
+  const [movieUpdatesError, setMovieUpdatesError] = useState<string | null>(null);
 
   const playVideo = (videoId: string) => {
     setActiveVideoId(videoId);
     setAutoplayVideoId(videoId);
+    setTrailerCarouselPaused(true);
   };
+
+  const changeTrailerSlide = (direction: 1 | -1) => {
+    setTrailerSlideIndex(
+      (current) =>
+        (current + direction + trailerCarouselVideos.length) % trailerCarouselVideos.length,
+    );
+  };
+
+  useEffect(() => {
+    if (trailerCarouselPaused) return undefined;
+
+    const timer = window.setInterval(() => {
+      setTrailerSlideIndex((current) => (current + 1) % trailerCarouselVideos.length);
+    }, 5000);
+
+    return () => window.clearInterval(timer);
+  }, [trailerCarouselPaused]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadMovieUpdates() {
+      try {
+        setMovieUpdatesLoading(true);
+        setMovieUpdatesError(null);
+
+        const videos = await fetchAndharanMovieUpdates();
+
+        if (!cancelled) {
+          setMovieUpdateVideos(videos);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          const isApiPermissionError =
+            error instanceof YouTubeApiError && [401, 403].includes(error.status);
+
+          if (isApiPermissionError) {
+            setMovieUpdateVideos(fallbackAndharanMovieUpdates);
+          }
+
+          setMovieUpdatesError(
+            isApiPermissionError
+              ? "Live YouTube updates are temporarily unavailable. Showing selected Andharan videos."
+              : error instanceof Error
+                ? error.message
+                : "Could not load movie updates.",
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setMovieUpdatesLoading(false);
+        }
+      }
+    }
+
+    void loadMovieUpdates();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const activeTrailerVideo = trailerCarouselVideos[trailerSlideIndex];
 
   return (
     <>
@@ -373,7 +707,7 @@ function LandingContent() {
             eyebrow="Story Overview"
             title={
               <>
-                A Love Story Wrapped In Fear & <span className="text-[#F6B76F]">Mystery</span>
+                A Love Story Wrapped In Fear & <span className="text-[#f88c08]">Mystery</span>
               </>
             }
           />
@@ -401,12 +735,12 @@ function LandingContent() {
               The Soundscape
             </p>
             <h2 className="mt-2 text-3xl font-black uppercase leading-tight text-white md:text-4xl">
-              Audio Interactive <span className="text-[#F6B76F]">Hub</span>
+              Audio Interactive <span className="text-[#f88c08]">Hub</span>
             </h2>
           </div>
-          <div className="mt-10 border-y border-[#F6B76F]/30 py-8 text-[15px] leading-7 text-[#D7D7D7] md:text-base">
+          <div className="mt-10 border-y border-[#f88c08]/30 py-8 text-[15px] leading-7 text-[#D7D7D7] md:text-base">
             <p className="text-[14px] font-semibold text-white">
-              <span className="text-[#F6B76F]">Sonic Overview:</span> The Maestro Hari S R
+              <span className="text-[#f88c08]">Sonic Overview:</span> The Maestro Hari S R
             </p>
             <p className="mt-4 text-[14px]">
               The complex emotional and terrifying atmosphere of Andharan is orchestrated by modern
@@ -435,12 +769,12 @@ function LandingContent() {
                 <div className="flex flex-1 flex-col">
                   <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                     <div>
-                      <p className="text-[14px] font-[800] uppercase tracking-[0.18em] text-[#F6B76F]">
+                      <p className="text-[14px] font-[800] uppercase tracking-[0.18em] text-[#f88c08]">
                         {track.title}
                       </p>
                       <h3 className="mt-1 text-xl font-bold text-white">{track.subtitle}</h3>
                     </div>
-                    <span className="w-fit border border-[#F6B76F]/40 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#F6B76F]">
+                    <span className="w-fit border border-[#f88c08]/40 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#f88c08]">
                       Track
                     </span>
                   </div>
@@ -461,7 +795,7 @@ function LandingContent() {
                           target="_blank"
                           rel="noreferrer"
                           aria-label={`${track.title} on ${platform.name}`}
-                          className="inline-flex min-h-8 shrink-0 items-center justify-center border border-[#F6B76F]/45 bg-black/30 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-[#F6B76F] transition hover:border-[#F6B76F] hover:bg-[#F6B76F] hover:text-black"
+                          className="inline-flex min-h-8 shrink-0 items-center justify-center border border-[#f88c08]/45 bg-black/30 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-[#f88c08] transition hover:border-[#f88c08] hover:bg-[#f88c08] hover:text-black"
                         >
                           {platform.name}
                         </a>
@@ -483,17 +817,122 @@ function LandingContent() {
           eyebrow="Movie Motion Poster"
           title={
             <>
-              The Hunter Is <span className="text-[#F6B76F]">Coming</span>
+              The Hunter Is <span className="text-[#f88c08]">Coming</span>
             </>
           }
         />
         <div className="mx-auto mt-12 max-w-[1080px]">
-          <YouTubeVideoCard
-            video={motionPosterVideo}
-            active={activeVideoId === motionPosterVideo.id}
-            autoplay={autoplayVideoId === motionPosterVideo.id}
-            onPlay={playVideo}
-          />
+          <div className="relative">
+            <button
+              type="button"
+              aria-label="Show previous trailer"
+              onClick={() => {
+                setTrailerCarouselPaused(true);
+                changeTrailerSlide(-1);
+              }}
+              className="absolute left-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#f88c08]/50 bg-black/65 text-[#f88c08] backdrop-blur-sm transition hover:bg-[#f88c08] hover:text-black md:left-5 md:h-12 md:w-12"
+            >
+              <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              aria-label="Show next trailer"
+              onClick={() => {
+                setTrailerCarouselPaused(true);
+                changeTrailerSlide(1);
+              }}
+              className="absolute right-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#f88c08]/50 bg-black/65 text-[#f88c08] backdrop-blur-sm transition hover:bg-[#f88c08] hover:text-black md:right-5 md:h-12 md:w-12"
+            >
+              <ChevronRight className="h-5 w-5" aria-hidden="true" />
+            </button>
+            <motion.div
+              key={activeTrailerVideo.id}
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.55, ease: "easeOut" }}
+            >
+              <YouTubeVideoCard
+                video={activeTrailerVideo}
+                active={activeVideoId === activeTrailerVideo.id}
+                autoplay={autoplayVideoId === activeTrailerVideo.id}
+                onPlay={playVideo}
+              />
+            </motion.div>
+          </div>
+          <div className="mt-6 flex items-center justify-center gap-3">
+            {trailerCarouselVideos.map((video, index) => (
+              <button
+                key={video.id}
+                type="button"
+                aria-label={`Show ${video.title}`}
+                aria-current={trailerSlideIndex === index}
+                onClick={() => {
+                  setTrailerCarouselPaused(true);
+                  setTrailerSlideIndex(index);
+                }}
+                className={`h-2.5 rounded-full transition-all duration-300 ${
+                  trailerSlideIndex === index
+                    ? "w-9 bg-[#f88c08]"
+                    : "w-2.5 bg-[#f88c08]/35 hover:bg-[#f88c08]/70"
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="gallery-videos" className="scroll-mt-24 bg-black px-6 py-20 text-white md:py-24">
+        <SectionHeading
+          eyebrow="Gallery Videos"
+          title={
+            <>
+              Andharan <span className="text-[#f88c08]">Videos</span>
+            </>
+          }
+        />
+        <div className="mx-auto mt-12 max-w-[1080px]">
+          {movieUpdatesLoading ? (
+            <div className="border border-[#f88c08]/30 bg-white/[0.04] px-6 py-10 text-center text-[14px] font-semibold uppercase tracking-[0.18em] text-[#f88c08]">
+              Loading Movie Updates
+            </div>
+          ) : movieUpdateVideos.length > 0 ? (
+            <>
+              {movieUpdatesError && (
+                <div className="mb-6 border border-[#f88c08]/30 bg-white/[0.04] px-5 py-4 text-center text-[13px] font-semibold text-[#D7D7D7]">
+                  {movieUpdatesError}
+                </div>
+              )}
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {movieUpdateVideos.slice(0, 3).map((video) => (
+                  <YouTubeVideoCard
+                    key={video.id}
+                    video={video}
+                    active={activeVideoId === video.id}
+                    autoplay={autoplayVideoId === video.id}
+                    onPlay={playVideo}
+                  />
+                ))}
+              </div>
+            </>
+          ) : movieUpdatesError ? (
+            <div className="border border-[#f88c08]/30 bg-white/[0.04] px-6 py-10 text-center text-[14px] font-semibold text-[#D7D7D7]">
+              {movieUpdatesError}
+            </div>
+          ) : (
+            <div className="border border-[#f88c08]/30 bg-white/[0.04] px-6 py-10 text-center text-[14px] font-semibold text-[#D7D7D7]">
+              No Andharan movie updates are available yet.
+            </div>
+          )}
+          <div className="mt-8 flex justify-center">
+            <a
+              href={youtubeChannelUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="book-now-btn inline-flex min-h-10 items-center justify-center rounded-sm bg-[#f88c08] px-5 py-2.5 text-[11px] font-black uppercase tracking-[0.18em] text-black transition hover:brightness-110"
+            >
+              View More On YouTube
+            </a>
+          </div>
         </div>
       </section>
 
@@ -505,7 +944,7 @@ function LandingContent() {
           eyebrow="Movie Lyrical Songs"
           title={
             <>
-              Movie <span className="text-[#F6B76F]">Lyrical Songs</span>
+              Movie <span className="text-[#f88c08]">Lyrical Songs</span>
             </>
           }
         />
@@ -528,7 +967,7 @@ function LandingContent() {
           eyebrow="Main Characters"
           title={
             <>
-              The Faces Behind <span className="text-[#F6B76F]">The Mystery</span>
+              The Faces Behind <span className="text-[#f88c08]">The Mystery</span>
             </>
           }
         />
@@ -544,7 +983,7 @@ function LandingContent() {
           eyebrow="Creative Team"
           title={
             <>
-              The Minds Behind <span className="text-[#F6B76F]">Andharan</span>
+              The Minds Behind <span className="text-[#f88c08]">Andharan</span>
             </>
           }
         />
@@ -572,7 +1011,7 @@ function LandingContent() {
         <div className="mx-auto max-w-[1080px]">
           <div className="mb-12 text-center">
             <h2 className="text-3xl font-black uppercase leading-tight text-white md:text-4xl">
-              Credits <span className="text-[#F6B76F]">Roll</span>
+              Credits <span className="text-[#f88c08]">Roll</span>
             </h2>
           </div>
 
@@ -583,7 +1022,7 @@ function LandingContent() {
       <section className="relative flex min-h-[692px] items-center justify-center overflow-hidden bg-gradient-to-b from-black from-20% to-[#562E00] px-6 py-28 text-center">
         <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black to-transparent" />
         <div className="relative z-10 flex max-w-[907px] flex-col items-center gap-6">
-          <h2 className="text-4xl font-bold capitalize leading-tight text-[#F6B76F] md:text-[64px] md:leading-[55px]">
+          <h2 className="text-4xl font-bold capitalize leading-tight text-[#f88c08] md:text-[64px] md:leading-[55px]">
             Experience The Darkness
           </h2>
           <p className="max-w-[885px] text-[14px] font-normal capitalize leading-[31px] text-white md:text-[14px]">
@@ -597,7 +1036,7 @@ function LandingContent() {
               href="https://www.instagram.com/andharanmovie?igsh=MXJ3bWNyejBma2Ztcw=="
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center rounded-full bg-white/10 p-4 text-[#F6B76F] transition-all hover:bg-[#F6B76F] hover:text-[#1D1D1D]"
+              className="flex items-center justify-center rounded-full bg-white/10 p-4 text-[#f88c08] transition-all hover:bg-[#f88c08] hover:text-[#1D1D1D]"
               aria-label="Instagram"
             >
               <Instagram size={28} />
@@ -606,7 +1045,7 @@ function LandingContent() {
               href="https://x.com/andharanmovie"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center rounded-full bg-white/10 p-4 text-[#F6B76F] transition-all hover:bg-[#F6B76F] hover:text-[#1D1D1D]"
+              className="flex items-center justify-center rounded-full bg-white/10 p-4 text-[#f88c08] transition-all hover:bg-[#f88c08] hover:text-[#1D1D1D]"
               aria-label="X"
             >
               <svg
@@ -623,7 +1062,7 @@ function LandingContent() {
               href="https://youtube.com/@andharanthehunter?si=LlInbond-EdKUcUY"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center rounded-full bg-white/10 p-4 text-[#F6B76F] transition-all hover:bg-[#F6B76F] hover:text-[#1D1D1D]"
+              className="flex items-center justify-center rounded-full bg-white/10 p-4 text-[#f88c08] transition-all hover:bg-[#f88c08] hover:text-[#1D1D1D]"
               aria-label="YouTube"
             >
               <Youtube size={28} />
@@ -632,7 +1071,7 @@ function LandingContent() {
               href="https://www.facebook.com/andharanmovie?__cft__[0]=AZb80cy5pPk0xyPYzhyra86V8HCWfUlZ2-YnRuSruK7oQfLFbCHa24WeaR8iRAH9-TFfVAX0hwQ5gh6hlDHmFTPIBkw5nibtH7eaN0PPly99bp1DCnci6xn1A4pHJPMN88xbeA0Yq0Wz4OS88QcQWsbhhGsDWe5rvdCFAz5VZQB9wGSitni0fBVrtOkj4VGH_O_SVUPr5GiapTru1JUPPJMn&__tn__=-UC%2CP-R"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center rounded-full bg-white/10 p-4 text-[#F6B76F] transition-all hover:bg-[#F6B76F] hover:text-[#1D1D1D]"
+              className="flex items-center justify-center rounded-full bg-white/10 p-4 text-[#f88c08] transition-all hover:bg-[#f88c08] hover:text-[#1D1D1D]"
               aria-label="Facebook"
             >
               <Facebook size={28} />
@@ -643,7 +1082,7 @@ function LandingContent() {
             href="https://www.instagram.com/andharanmovie?igsh=MXJ3bWNyejBma2Ztcw=="
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-[72px] inline-flex h-[75px] w-full max-w-[398px] items-center justify-center rounded-[10px] bg-[#F6B76F] text-xl font-medium capitalize text-[#1D1D1D] shadow-[0_4px_4px_rgba(0,0,0,0.25)] transition-all hover:bg-[#E8A855] md:text-2xl"
+            className="mt-[72px] inline-flex h-[75px] w-full max-w-[398px] items-center justify-center rounded-[10px] bg-[#f88c08] text-xl font-medium capitalize text-[#1D1D1D] shadow-[0_4px_4px_rgba(0,0,0,0.25)] transition-all hover:bg-[#df7d07] md:text-2xl"
           >
             Follow Movies Updates
           </a>
@@ -702,10 +1141,10 @@ function TheatricalCreditsCarousel() {
           {extendedCredits.map((credit, index) => (
             <div
               key={index}
-              className="flex shrink-0 items-center justify-center rounded-[10px] border border-[#F6B76F]/30 bg-white/[0.06] px-4 py-4 backdrop-blur-sm min-w-fit"
+              className="flex shrink-0 items-center justify-center rounded-[10px] border border-[#f88c08]/30 bg-white/[0.06] px-4 py-4 backdrop-blur-sm min-w-fit"
             >
               <div className="text-center">
-                <p className="text-[14px] font-semibold uppercase tracking-[0.1em] text-[#F6B76F]">
+                <p className="text-[14px] font-semibold uppercase tracking-[0.1em] text-[#f88c08]">
                   {credit.role}
                 </p>
                 <p className="mt-1 text-[14px] font-medium text-white">{credit.name}</p>
@@ -764,7 +1203,7 @@ function YouTubeVideoCard({
 
   return (
     <article
-      className={`overflow-hidden border border-[#F6B76F]/30 bg-white/[0.04] shadow-[0_28px_90px_rgba(0,0,0,0.5)] ${className}`}
+      className={`overflow-hidden border border-[#f88c08]/30 bg-white/[0.04] shadow-[0_28px_90px_rgba(0,0,0,0.5)] ${className}`}
     >
       {active ? (
         <iframe
@@ -788,13 +1227,13 @@ function YouTubeVideoCard({
             className="h-full w-full object-cover opacity-75 transition duration-300 group-hover:scale-105 group-hover:opacity-90"
           />
           <span className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-black/10" />
-          <span className="absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[#F6B76F]/60 bg-black/60 text-[#F6B76F] transition group-hover:bg-[#F6B76F] group-hover:text-black">
+          <span className="absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[#f88c08]/60 bg-black/60 text-[#f88c08] transition group-hover:bg-[#f88c08] group-hover:text-black">
             <Play className="ml-1 h-7 w-7 fill-current" aria-hidden="true" />
           </span>
         </button>
       )}
-      <div className="border-t border-[#F6B76F]/25 px-5 py-4">
-        <h3 className="text-[14px] font-[800] uppercase tracking-[0.18em] text-[#F6B76F]">
+      <div className="border-t border-[#f88c08]/25 px-5 py-4">
+        <h3 className="text-[14px] font-[800] uppercase tracking-[0.18em] text-[#f88c08]">
           {video.title}
         </h3>
       </div>
@@ -865,7 +1304,7 @@ function ProfileCard({
       </div>
       <div className="flex w-full max-w-[245px] flex-col items-center gap-2.5">
         <div className="flex items-center justify-center gap-2">
-          <h3 className="flex min-h-[26px] items-center justify-center text-center text-xl font-bold uppercase leading-[31px] text-[#F6B76F]">
+          <h3 className="flex min-h-[26px] items-center justify-center text-center text-xl font-bold uppercase leading-[31px] text-[#f88c08]">
             {name}
           </h3>
           {social && Object.entries(social).filter(([, url]) => url).length > 0 && (
@@ -878,7 +1317,7 @@ function ProfileCard({
                     href={url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center text-[#F6B76F] hover:text-white transition-colors"
+                    className="flex items-center justify-center text-[#f88c08] hover:text-white transition-colors"
                     aria-label={platform}
                   >
                     {getSocialIcon(platform)}
@@ -889,7 +1328,7 @@ function ProfileCard({
         </div>
         <div className="flex w-full flex-col items-center gap-[5px]">
           <p
-            className={`flex items-center justify-center text-center text-base capitalize text-[#F6B76F] ${
+            className={`flex items-center justify-center text-center text-base capitalize text-[#f88c08] ${
               compact ? "min-h-[19px] font-medium" : "min-h-[30px] font-semibold"
             }`}
           >
@@ -909,7 +1348,7 @@ function ProfileCard({
               type="button"
               aria-expanded={expanded}
               onClick={() => setExpanded((current) => !current)}
-              className="mt-1 text-xs font-semibold capitalize leading-5 text-[#F6B76F] transition hover:text-white"
+              className="mt-1 text-xs font-semibold capitalize leading-5 text-[#f88c08] transition hover:text-white"
             >
               {expanded ? "See less" : "See more"}
             </button>

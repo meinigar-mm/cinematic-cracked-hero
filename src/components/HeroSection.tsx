@@ -78,8 +78,8 @@ export default function HeroSection() {
           className="mt-6 flex items-center justify-center gap-[5px] lg:justify-start"
         >
           <a
-            href="#soundscape"
-            className="flex w-[120px] h-[38px] items-center justify-center rounded-[5px] bg-primary text-[#1D1D1D] text-xs font-medium capitalize hover:brightness-110 transition"
+            href="/#soundscape"
+            className="flex h-[38px] w-[120px] items-center justify-center rounded-[5px] border border-primary text-xs font-medium capitalize text-primary transition hover:bg-primary hover:text-[#1D1D1D]"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
             Explore
@@ -88,7 +88,7 @@ export default function HeroSection() {
             href="https://www.youtube.com/watch?v=KOE_xN_DMio"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex w-[120px] h-[38px] items-center justify-center rounded-[5px] border border-primary text-primary text-xs font-medium capitalize hover:bg-primary hover:text-[#1D1D1D] transition"
+            className="book-now-btn flex h-[38px] w-[120px] items-center justify-center rounded-[5px] bg-primary text-xs font-medium capitalize text-[#1D1D1D] transition hover:brightness-110"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
             Watch Trailer

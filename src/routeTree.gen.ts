@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as GalleryVideosRouteImport } from './routes/gallery/videos'
+import { Route as GalleryPostersRouteImport } from './routes/gallery/posters'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GalleryVideosRoute = GalleryVideosRouteImport.update({
+  id: '/gallery/videos',
+  path: '/gallery/videos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GalleryPostersRoute = GalleryPostersRouteImport.update({
+  id: '/gallery/posters',
+  path: '/gallery/posters',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/gallery/posters': typeof GalleryPostersRoute
+  '/gallery/videos': typeof GalleryVideosRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/gallery/posters': typeof GalleryPostersRoute
+  '/gallery/videos': typeof GalleryVideosRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/gallery/posters': typeof GalleryPostersRoute
+  '/gallery/videos': typeof GalleryVideosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/gallery/posters' | '/gallery/videos'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/gallery/posters' | '/gallery/videos'
+  id: '__root__' | '/' | '/gallery/posters' | '/gallery/videos'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  GalleryPostersRoute: typeof GalleryPostersRoute
+  GalleryVideosRoute: typeof GalleryVideosRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +68,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/gallery/videos': {
+      id: '/gallery/videos'
+      path: '/gallery/videos'
+      fullPath: '/gallery/videos'
+      preLoaderRoute: typeof GalleryVideosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gallery/posters': {
+      id: '/gallery/posters'
+      path: '/gallery/posters'
+      fullPath: '/gallery/posters'
+      preLoaderRoute: typeof GalleryPostersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  GalleryPostersRoute: GalleryPostersRoute,
+  GalleryVideosRoute: GalleryVideosRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

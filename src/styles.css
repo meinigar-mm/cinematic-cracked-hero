@@ -104,17 +104,17 @@
   --card-foreground: oklch(0.96 0.02 80);
   --popover: oklch(0.12 0.015 40);
   --popover-foreground: oklch(0.96 0.02 80);
-  --primary: oklch(0.78 0.14 70);
+  --primary: #f88c08;
   --primary-foreground: oklch(0.12 0.02 40);
   --secondary: oklch(0.18 0.02 40);
   --secondary-foreground: oklch(0.96 0.02 80);
   --muted: oklch(0.18 0.02 40);
   --muted-foreground: oklch(0.68 0.04 70);
-  --accent: oklch(0.78 0.14 70);
+  --accent: #f88c08;
   --accent-foreground: oklch(0.12 0.02 40);
   --border: oklch(0.25 0.03 60 / 40%);
   --input: oklch(0.25 0.03 60 / 40%);
-  --ring: oklch(0.78 0.14 70);
+  --ring: #f88c08;
   --font-display: "Cinzel", "Playfair Display", serif;
   --font-body: "Inter", system-ui, sans-serif;
 }
@@ -176,6 +176,33 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+  }
+}
+
+.book-now-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.book-now-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.45);
+  transform: skewX(-25deg);
+  animation: book-now-shine 2.5s infinite;
+}
+
+.book-now-btn:hover::before {
+  animation-duration: 1.4s;
+}
+
+@keyframes book-now-shine {
+  100% {
+    left: 150%;
   }
 }
 
